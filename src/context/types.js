@@ -1,0 +1,3 @@
+export const ADD_TO_CART_ACTION = 'ADD_TO_CART';
+export const REMOVE_FROM_CART_ACTION = 'REMOVE_FROM_CART';
+export const EMPTY_CART_ACTION = 'EMPTY_CART';
