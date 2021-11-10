@@ -1,15 +1,31 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import ShoppingCartContext from './shoppingCartContext';
 import ShoppingCartReducer from './shoppingCartReducer';
-import { ADD_TO_CART, REMOVE_FROM_CART, EMPTY_CART } from '../types';
+import {
+  ADD_TO_CART,
+  REMOVE_FROM_CART,
+  EMPTY_CART,
+  INCREMENT_QUANTITY,
+  DECREMENT_QUANTITY,
+} from '../types';
 import { fetchProducts } from '../../fetchData';
 
 const ShoppingCartState = (props) => {
-  const initialState = {
-    shoppingCart: [],
+  const cartInLocalStorage = window.localStorage.getItem('shoppingCart');
+
+  let initialState = {
+    shoppingCart: [],  
   };
 
+  if (cartInLocalStorage) {
+    initialState = {
+      shoppingCart: JSON.parse(cartInLocalStorage),
+    };
+  }
+
   const [state, dispatch] = useReducer(ShoppingCartReducer, initialState);
+
+  const shoppingCart = state.shoppingCart;
 
   const [productData, setProductData] = useState([]);
 
@@ -19,10 +35,18 @@ const ShoppingCartState = (props) => {
     });
   }, []);
 
-  //set shopping cart to local storage
+  useEffect(() => {
+    console.log('local storage use effect working ');
+    window.localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+  }, [shoppingCart]);
 
-  //add item to cart
+  const getShoppingCartTotal = (shoppingCart) => {
+    const total = shoppingCart.reduce((accumulator, item, index, array) => {
+      return accumulator + item.price * item.quantity;
+    }, 0);
 
+    return total;
+  };
   const addItemToCart = (item) => {
     const { id, title, price, image } = item;
 
@@ -48,7 +72,29 @@ const ShoppingCartState = (props) => {
     });
   };
 
-  //empty shopping cart
+  const handleIncrement = (itemId) => {
+    dispatch({
+      type: INCREMENT_QUANTITY,
+      payload: {
+        itemId,
+      },
+    });
+  };
+
+  const handleDecrement = (itemId) => {
+    dispatch({
+      type: DECREMENT_QUANTITY,
+      payload: {
+        itemId,
+      },
+    });
+  };
+
+  const emptyCart = () =>{
+    dispatch({
+      type: EMPTY_CART
+    })
+  }
 
   return (
     <ShoppingCartContext.Provider
@@ -57,8 +103,10 @@ const ShoppingCartState = (props) => {
         shoppingCart: state.shoppingCart,
         addItemToCart,
         removeFromCart,
-        // emptyCart,
-        // total: getShoppingCartTotal(shoppingCart),
+        handleIncrement,
+        handleDecrement,
+        emptyCart,
+        total: getShoppingCartTotal(shoppingCart),
       }}
     >
       {props.children}

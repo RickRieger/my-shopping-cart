@@ -1,18 +1,38 @@
-import { Card, CardMedia, IconButton, Typography } from '@mui/material';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  CardMedia,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useContext } from 'react';
 import ShoppingCartContext from '../context/shoppingCart/shoppingCartContext';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { v4 as uuidv4 } from 'uuid';
 
 const CartItem = (props) => {
   const { item } = props;
 
   const shoppingCartContext = useContext(ShoppingCartContext);
-  const { removeFromCart } = shoppingCartContext;
+  const { removeFromCart, handleIncrement, handleDecrement } =
+    shoppingCartContext;
+
+  const buttons = [
+    <Button key='one' onClick={() => handleIncrement(item.id)}>
+      increase
+    </Button>,
+    <Button
+      key='two'
+      disabled={item.quantity === 1 ? true : false}
+      onClick={() => handleDecrement(item.id)}
+    >
+      decrease
+    </Button>,
+  ];
 
   return (
-    <Card key={uuidv4}>
+    <Card>
       <Box display='flex'>
         <Box>
           <CardMedia
@@ -38,6 +58,29 @@ const CartItem = (props) => {
             </Typography>
           </Box>
         </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            '& > *': {
+              m: 1,
+            },
+          }}
+        >
+          <ButtonGroup
+            orientation='vertical'
+            aria-label='vertical contained button group'
+            variant='text'
+          >
+            {buttons}
+          </ButtonGroup>
+        </Box>
+
+        <Box
+          display='flex'
+          flexDirection='column'
+          justifyContent='center'
+        ></Box>
         <Box
           px={2}
           display='flex'

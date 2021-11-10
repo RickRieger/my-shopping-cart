@@ -1,45 +1,91 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, EMPTY_CART } from '../types';
+import {
+  ADD_TO_CART,
+  REMOVE_FROM_CART,
+  EMPTY_CART,
+  INCREMENT_QUANTITY,
+  DECREMENT_QUANTITY,
+} from '../types';
 
 export default (state, action) => {
   switch (action.type) {
     case ADD_TO_CART:
-      const { id, title, price, image, quantity } = action.payload;
+      const { id, title, price, image } = action.payload;
+
+      const itemFound = state.shoppingCart.find((item) => item.id === id);
+
+      if (itemFound) {
+        itemFound.quantity = itemFound.quantity + 1;
+        return {
+          shoppingCart: [
+            ...state.shoppingCart.filter(
+              (item) => item.id !== action.payload.id
+            ),
+            itemFound,
+          ],
+        };
+      }
       return {
         shoppingCart: [
           ...state.shoppingCart,
-          { id, title, price, image, quantity },
+          { id, title, price, image, quantity: 1, timestamp: Date.now() },
         ],
       };
-    case REMOVE_FROM_CART:
-      console.log(action.payload);
-      let newShoppingCart = state.payload;
-      const index = state.shoppingCart
-        .map((e) => e.id)
-        .indexOf(action.payload.itemId);
-      if (index >= 0) {
-        newShoppingCart.splice(index, 1);
-      }
 
-      // console.log(action.payload.itemId);
-
-      // const itemsToBeRemoved = state.shoppingCart.find(
-      //   (item) => item.id === action.payload.itemId
-      // );
-
-      // console.log(itemsToBeRemoved);
-
-      // const filteredArray = state.shoppingCart.filter(
-      //   (item) => item.id !== action.payload.itemId
-      // );
+    case INCREMENT_QUANTITY:
+      const incrementItemFound = state.shoppingCart.find(
+        (item) => item.id === action.payload.itemId
+      );
+      incrementItemFound.quantity = incrementItemFound.quantity + 1;
 
       return {
-        shoppingCart: newShoppingCart,
+        shoppingCart: [
+          ...state.shoppingCart.filter((item) => item.id !== action.payload.id),
+        ],
       };
-    // case EMPTY_CART_ACTION
-    //   return {
+    case DECREMENT_QUANTITY:
+      const decrementItemFound = state.shoppingCart.find(
+        (item) => item.id === action.payload.itemId
+      );
+      decrementItemFound.quantity = decrementItemFound.quantity - 1;
 
-    //   };
+      return {
+        shoppingCart: [
+          ...state.shoppingCart.filter((item) => item.id !== action.payload.id),
+        ],
+      };
+
+    case REMOVE_FROM_CART:
+      const index = state.shoppingCart
+        .map((obj) => obj.id)
+        .indexOf(action.payload.itemId);
+
+      if (index >= 0) {
+        state.shoppingCart.splice(index, 1);
+      }
+
+      return {
+        shoppingCart: state.shoppingCart,
+      };
+    case EMPTY_CART:
+      return {
+        shoppingCart: [],
+      };
     default:
       return state;
   }
 };
+
+// const sortCartItems = (shoppingCartArray) => {
+//   const sorted = shoppingCartArray.sort(function (x, y) {
+//     console.log({ x, y });
+//     console.log({ xTimestamp: x.timestamp });
+
+//     console.log('number: ', y.timestamp - x.timestamp);
+
+//     return y.timestamp - x.timestamp;
+//   });
+
+//   console.log({ shoppingCartArray, sorted });
+
+//   return sorted;
+// };

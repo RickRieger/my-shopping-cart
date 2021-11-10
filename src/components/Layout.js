@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Header from '../components/Header';
 import { Box } from '@mui/system';
