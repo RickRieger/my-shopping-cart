@@ -1,5 +1,7 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import React, { useContext } from 'react';
+import ShoppingCartContext from '../context/shoppingCart/shoppingCartContext';
 import {
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -8,11 +10,13 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import Button from '@mui/material/Button';
-import { Box } from '@mui/system';
-import React from 'react';
 
-const ProductList = ({ products }) => {
+const ProductList = () => {
+  const shoppingCartContext = useContext(ShoppingCartContext);
+  const { products, addItemToCart } = shoppingCartContext;
+
   return (
     <Box>
       {products.map((product) => (
@@ -53,14 +57,14 @@ const ProductList = ({ products }) => {
               >
                 <Button
                   variant='text'
-                  // onClick={() =>
-                  //   addItemToCart({
-                  //     id: product.id,
-                  //     title: product.title,
-                  //     price: product.price,
-                  //     image: product.image,
-                  //   })
-                  // }
+                  onClick={() =>
+                    addItemToCart({
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      image: product.image,
+                    })
+                  }
                 >
                   Add to cart
                 </Button>
