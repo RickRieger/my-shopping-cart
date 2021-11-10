@@ -8,6 +8,7 @@ import './App.css';
 import ShoppingCartState from './context/shoppingCart/ShoppingCartState';
 import CartPage from './pages/CartPage';
 import Home from './pages/Home';
+import Login from './pages/Loggin'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path='/cart' element={<CartPage />} />
           <Route path='/' element={<Home />} />
+          <Route path="/login" element= {<Login />} />
         </Routes>
       </Router>
     </ShoppingCartState>
